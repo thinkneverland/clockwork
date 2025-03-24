@@ -1,41 +1,65 @@
 {
-    "name": "itsgoingd/clockwork",
-    "description": "php dev tools in your browser",
-    "keywords": ["debugging", "profiling", "logging", "laravel", "lumen", "slim", "devtools"],
-    "homepage": "https://underground.works/clockwork",
+    "name": "thinkneverland/tapped",
+    "description": "Laravel Livewire debugger with real-time browser extension, PHP-based MCP protocol server, and AI IDE/plugin integration hooks",
+    "keywords": [
+        "debugging",
+        "profiling",
+        "logging",
+        "laravel",
+        "livewire",
+        "devtools",
+        "mcp",
+        "ide-integration"
+    ],
+    "homepage": "https://thinkneverland.com/tapped",
     "license": "MIT",
     "authors": [
         {
-            "name": "itsgoingd",
-            "email": "itsgoingd@luzer.sk",
-            "homepage": "https://twitter.com/itsgoingd"
+            "name": "ThinkNeverland",
+            "homepage": "https://thinkneverland.com"
         }
     ],
     "require": {
-        "php": ">=7.1",
-        "ext-json": "*"
+        "php": ">=8.1",
+        "laravel/framework": "^10.0",
+        "livewire/livewire": "*",
+        "ext-json": "*",
+        "cboden/ratchet": "^0.4.4",
+        "react/event-loop": "^1.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "pestphp/pest": "^2.0",
+        "mockery/mockery": "^1.5"
     },
     "suggest": {
-		"ext-pdo": "Needed in order to use a SQL database for metadata storage",
-		"ext-pdo_sqlite": "Needed in order to use a SQLite for metadata storage",
-		"ext-pdo_mysql": "Needed in order to use MySQL for metadata storage",
-		"ext-pdo_postgres": "Needed in order to use Postgres for metadata storage",
-		"ext-redis": "Needed in order to use Redis for metadata storage",
-		"php-http/discovery": "Vanilla integration - required for the middleware zero-configuration setup"
+        "ext-pdo": "Needed for SQL database metadata storage",
+        "ext-redis": "Needed for Redis metadata storage"
     },
     "autoload": {
         "psr-4": {
+            "ThinkNeverland\\Tapped\\": "src/",
             "Clockwork\\": "Clockwork/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ThinkNeverland\\Tapped\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Clockwork\\Support\\Laravel\\ClockworkServiceProvider"
+                "ThinkNeverland\\Tapped\\TappedServiceProvider"
             ],
             "aliases": {
-                "Clockwork": "Clockwork\\Support\\Laravel\\Facade"
+                "Tapped": "ThinkNeverland\\Tapped\\Facades\\Tapped"
             }
         }
-    }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
