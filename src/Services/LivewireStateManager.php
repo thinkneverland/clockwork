@@ -80,7 +80,20 @@ class LivewireStateManager
 
     public function registerComponent(Component $component): void
     {
-        $componentId = $component->getId();
+        // Get component ID - in Livewire v3 this might be accessed differently
+        try {
+            $reflectionProperty = new \ReflectionProperty($component, 'id');
+            $reflectionProperty->setAccessible(true);
+            $componentId = $reflectionProperty->getValue($component);
+        } catch (\Exception $e) {
+            // Fallback method - try to get id using method if it exists
+            $componentId = method_exists($component, 'getId') ? $component->getId() : null;
+        }
+
+        if (!$componentId) {
+            return; // Can't register without an ID
+        }
+
         $keys = Cache::get('tapped_component_ids', []);
 
         if (!in_array($componentId, $keys)) {
@@ -90,7 +103,27 @@ class LivewireStateManager
 
         // Store initial state
         if (!$this->getState($componentId)) {
-            $this->updateState($componentId, $component->getPublicPropertiesDefinedBySubClass());
+            // In Livewire v3, public properties might be accessed differently
+            try {
+                // Try to get public properties using reflection
+                $publicProperties = [];
+                $reflection = new \ReflectionClass($component);
+                $properties = $reflection->getProperties(\ReflectionProperty::IS_PUBLIC);
+
+                foreach ($properties as $property) {
+                    if (!$property->isStatic()) {
+                        $name = $property->getName();
+                        $publicProperties[$name] = $property->getValue($component);
+                    }
+                }
+
+                $this->updateState($componentId, $publicProperties);
+            } catch (\Exception $e) {
+                // Fallback to original method if available
+                if (method_exists($component, 'getPublicPropertiesDefinedBySubClass')) {
+                    $this->updateState($componentId, $component->getPublicPropertiesDefinedBySubClass());
+                }
+            }
         }
     }
 }

@@ -10,7 +10,7 @@ return [
     |
     */
 
-    'enabled' => env('TAPPED_ENABLED', env('APP_DEBUG', false)),
+    'enabled' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -33,7 +33,17 @@ return [
     'mcp_server' => [
         'host' => env('TAPPED_MCP_HOST', '127.0.0.1'),
         'port' => env('TAPPED_MCP_PORT', 8888),
-        'secure' => env('TAPPED_MCP_SECURE', false),
+        'environments' => [
+            'docker' => [
+                'host' => '0.0.0.0',
+            ],
+            'herd' => [
+                'host' => '0.0.0.0',
+            ],
+            'local' => [
+                'host' => '127.0.0.1',
+            ],
+        ],
     ],
 
     /*

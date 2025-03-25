@@ -1,0 +1,124 @@
+{
+  "tapped_by_thinkneverland": {
+    "package_identity": {
+      "name": "Tapped",
+      "vendor": "ThinkNeverland",
+      "forked_from": "https://github.com/itsgoingd/clockwork (MIT)",
+      "description": "Laravel Livewire debugger with real-time browser extension, PHP-based MCP protocol server, and AI IDE/plugin integration hooks.",
+      "compatibility": {
+        "laravel_versions": ">=10.x",
+        "livewire_versions": "All (v1, v2, v3+)",
+        "php_versions": ">=8.1"
+      }
+    },
+    "technical_implementation_plan": {
+      "laravel_package": {
+        "core_features": [
+          "Real-time Livewire component state inspection",
+          "Inline editing of Livewire states directly from the extension",
+          "Lifecycle and emitted event logging",
+          "Component state snapshotting for time-travel debugging",
+          "Detailed Livewire AJAX request tracking",
+          "Database query monitoring with automatic N+1 query detection"
+        ],
+        "artisan_commands": {
+          "launch_mcp_server": "php artisan tapped:mcp-server"
+        },
+        "configuration": {
+          "file": "tapped.php",
+          "env_variables": {
+            "TAPPED_EXTENSIVE_LOGGING": {
+              "default": false,
+              "description": "Toggle extensive logging for debugging during Tapped development."
+            }
+          }
+        }
+      },
+      "browser_extension": {
+        "fork_from": "https://github.com/itsgoingd/clockwork-chrome (MIT)",
+        "supported_browsers": ["Chrome", "Firefox"],
+        "expanded_features": {
+          "livewire_debug_panel": {
+            "real_time_state_inspection": true,
+            "state_editing_via_ui": true,
+            "event_timeline": true,
+            "ajax_request_logging": true,
+            "query_analysis_and_n1_alerts": true,
+            "time_travel_state_navigation": true
+          },
+          "mcp_protocol": {
+            "communication_protocol": "WebSocket (JSON format adhering to MCP spec)",
+            "real_time_interaction": true,
+            "connection_options": ["automatic discovery", "manual host/port configuration"]
+          },
+          "ai_ide_plugin_integration": {
+            "hooks_for_external_ai_tools": true,
+            "automatic_debug_info_retrieval": true,
+            "screenshot_capture_and_embedding": true,
+            "api_endpoints": "Exposed extension API allowing IDEs/plugins to automatically request and receive debug state, logs, and screenshots"
+          }
+        }
+      },
+      "php_based_mcp_server": {
+        "language_and_framework": "PHP >=8.1 with Laravel integration",
+        "artisan_command_initiated": true,
+        "no_external_node_dependency": true,
+        "persistent_communication": "Implemented via PHP WebSocket (Ratchet/ReactPHP)",
+        "protocol_compliance": {
+          "adheres_to": "AgentDesk browser-tools MCP protocol",
+          "message_format": "Structured JSON over WebSockets"
+        }
+      },
+      "licensing_and_branding": {
+        "original_license": "MIT (Clockwork)",
+        "commercial_reuse": true,
+        "branding_requirements": {
+          "retain_original_license_notice": true,
+          "product_rebranding": "Tapped by ThinkNeverland",
+          "avoid_references_to_original_tool_names": true
+        }
+      },
+      "development_guidelines": {
+        "coding_standards": {
+          "psr_standards": ["PSR-1", "PSR-4", "PSR-12"],
+          "indentation": "4 spaces",
+          "maximum_line_length": 120,
+          "enforce_strict_types": true
+        },
+        "testing_practices": {
+          "frameworks": ["PHPUnit", "Pest"],
+          "test_categories": ["Feature tests", "Unit tests"],
+          "target_code_coverage": ">=80%"
+        },
+        "deployment_procedures": {
+          "cache_commands_during_deployment": ["config:cache", "route:cache", "view:cache"],
+          "disable_debug_in_production": true
+        }
+      },
+      "documentation_requirements": {
+        "initial_readme_generation": true,
+        "required_sections": [
+          "Introduction and overview",
+          "Compatibility details",
+          "Installation and initial setup",
+          "Detailed configuration guide",
+          "Comprehensive feature descriptions and usage examples",
+          "Instructions for MCP server setup",
+          "Browser extension installation and user guide",
+          "Integration instructions for AI IDE/plugins",
+          "Common troubleshooting scenarios and FAQ",
+          "Testing guidance and contributor information",
+          "Versioning policies and release notes",
+          "Security guidelines and performance optimization recommendations"
+        ]
+      }
+    },
+    "external_inspirations_and_references": {
+      "clockwork": "Base debugging architecture and browser extension implementation",
+      "agentdesk_mcp_protocol": "Communication structure and MCP protocol specification",
+      "beyondcode_livewire_devtools": "UI and feature set inspiration for Livewire debugging",
+      "laradumps": "Design considerations for real-time, socket-based debugging integrations"
+    },
+    "ai_generation_preprompt": "Tapped by ThinkNeverland is an advanced Laravel Livewire debugging toolkit that includes real-time browser extension integration, a PHP-based MCP server for model context debugging, and extensive hooks for AI-powered IDE and plugin integrations. The system enables developers to inspect, edit, and debug Livewire component states interactively, analyze events, track AJAX requests, detect database query performance issues, and even time-travel through component states for precise troubleshooting. Tapped provides APIs allowing external AI-driven tools to seamlessly request debugging information and screenshots directly from the browser extension, greatly enhancing productivity and debugging capabilities in Laravel development."
+  }
+}
