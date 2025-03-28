@@ -1,0 +1,14 @@
+parameters:
+    level: 5
+    paths:
+        - src
+    excludePaths:
+        - vendor
+        - node_modules
+    checkMissingIterableValueType: false
+    ignoreErrors:
+        # Add specific error patterns to ignore here if needed
+        # - '#Call to an undefined method [a-zA-Z0-9\\_]+::livewire\(\)#'
+        
+includes:
+    - vendor/nunomaduro/larastan/extension.neon

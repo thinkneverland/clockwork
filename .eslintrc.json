@@ -1,0 +1,47 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "webextensions": true,
+        "node": true,
+        "jest": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "globals": {
+        "process": "readonly",
+        "Chart": "readonly",
+        "global": "readonly",
+        "jest": "readonly",
+        "expect": "readonly",
+        "describe": "readonly",
+        "test": "readonly",
+        "beforeEach": "readonly",
+        "afterEach": "readonly",
+        "window": "readonly",
+        "module": "readonly",
+        "__dirname": "readonly"
+    },
+    "rules": {
+        "indent": "off",
+        "linebreak-style": "off",
+        "quotes": "off",
+        "semi": "off",
+        "no-empty": "off",
+        "no-undef": "error",
+        "no-unused-vars": [
+            "warn",
+            {
+                "argsIgnorePattern": "^_",
+                "varsIgnorePattern": "^_"
+            }
+        ],
+        "no-case-declarations": "off",
+        "no-useless-catch": "off",
+        "no-useless-escape": "off",
+        "prettier/prettier": "off"
+    }
+}

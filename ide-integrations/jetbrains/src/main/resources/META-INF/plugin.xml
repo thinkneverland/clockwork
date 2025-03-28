@@ -1,0 +1,50 @@
+<idea-plugin>
+    <id>com.thinkneverland.tapped</id>
+    <name>Tapped: Laravel Livewire Debugger</name>
+    <vendor email="info@thinkneverland.com" url="https://thinkneverland.com">ThinkNeverland</vendor>
+
+    <description><![CDATA[
+        <h2>Tapped - Laravel Livewire Debugger</h2>
+        <p>Real-time debugging for Laravel Livewire applications</p>
+        <p>Features:</p>
+        <ul>
+            <li>Livewire component state inspection and editing</li>
+            <li>Event timeline and monitoring</li>
+            <li>Database query analysis with N+1 detection</li>
+            <li>HTTP request monitoring</li>
+            <li>State snapshots and time-travel debugging</li>
+            <li>Screenshot and recording capabilities</li>
+        </ul>
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.jetbrains.php</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="Tapped" secondary="true" icon="TappedIcons.TAPPED_ICON" anchor="right"
+                    factoryClass="com.thinkneverland.tapped.window.TappedToolWindowFactory"/>
+        
+        <applicationConfigurable parentId="tools" instance="com.thinkneverland.tapped.settings.TappedSettingsConfigurable"
+                                 id="com.thinkneverland.tapped.settings.TappedSettingsConfigurable"
+                                 displayName="Tapped Settings"/>
+        
+        <applicationService serviceImplementation="com.thinkneverland.tapped.settings.TappedSettings"/>
+    </extensions>
+
+    <actions>
+        <group id="Tapped.ActionGroup" text="Tapped" description="Tapped actions" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <action id="Tapped.Connect" class="com.thinkneverland.tapped.actions.ConnectAction"
+                    text="Connect to Application" description="Connect to a Tapped-enabled Laravel application"/>
+            <action id="Tapped.ShowComponents" class="com.thinkneverland.tapped.actions.ShowComponentsAction"
+                    text="Show Livewire Components" description="Show all Livewire components"/>
+            <action id="Tapped.AnalyzeQueries" class="com.thinkneverland.tapped.actions.AnalyzeQueriesAction"
+                    text="Analyze Database Queries" description="Analyze database queries and detect N+1 issues"/>
+            <action id="Tapped.CaptureScreenshot" class="com.thinkneverland.tapped.actions.CaptureScreenshotAction"
+                    text="Capture Screenshot" description="Capture a screenshot of the current page"/>
+            <action id="Tapped.TakeSnapshot" class="com.thinkneverland.tapped.actions.TakeSnapshotAction"
+                    text="Take Debug Snapshot" description="Take a snapshot of the current debug state"/>
+        </group>
+    </actions>
+</idea-plugin>

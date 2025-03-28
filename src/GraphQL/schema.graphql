@@ -1,0 +1,246 @@
+"""
+Tapped GraphQL Schema
+This schema defines the GraphQL API for Tapped Laravel Livewire Debugger
+"""
+
+type Query {
+  """
+  Get all debug data including Livewire components, queries, requests, and events
+  """
+  debugData: DebugData!
+
+  """
+  Get Livewire component data
+  """
+  livewireComponents(id: ID): [LivewireComponent!]!
+
+  """
+  Get database queries data with optional N+1 detection
+  """
+  databaseQueries(detectN1: Boolean = false): DatabaseQueryResult!
+
+  """
+  Get HTTP requests data
+  """
+  httpRequests(id: ID): [HttpRequest!]!
+
+  """
+  Get events data
+  """
+  events(type: String): [Event!]!
+
+  """
+  Get a list of all snapshots
+  """
+  snapshots: [Snapshot!]!
+
+  """
+  Get a specific snapshot by ID
+  """
+  snapshot(id: ID!): Snapshot
+}
+
+type Mutation {
+  """
+  Capture a new debug snapshot
+  """
+  captureSnapshot(label: String): SnapshotResult!
+
+  """
+  Delete a snapshot by ID
+  """
+  deleteSnapshot(id: ID!): DeleteResult!
+
+  """
+  Update a Livewire component property value
+  """
+  updateComponentProperty(componentId: ID!, property: String!, value: String!): UpdateResult!
+
+  """
+  Execute a method on a Livewire component
+  """
+  executeComponentMethod(componentId: ID!, method: String!, params: [String!]): ExecuteResult!
+}
+
+"""
+The complete debug data set
+"""
+type DebugData {
+  livewireComponents: [LivewireComponent!]!
+  databaseQueries: [DatabaseQuery!]!
+  httpRequests: [HttpRequest!]!
+  events: [Event!]!
+}
+
+"""
+Livewire component data
+"""
+type LivewireComponent {
+  id: ID!
+  name: String!
+  class: String!
+  properties: [ComponentProperty!]!
+  methods: [ComponentMethod!]!
+  children: [LivewireComponent!]
+  renderTime: Float
+  parent: ID
+  updated: Boolean
+}
+
+"""
+A component property with name and value
+"""
+type ComponentProperty {
+  name: String!
+  value: String!
+  type: String!
+  isPublic: Boolean!
+  isPersistent: Boolean!
+  isComputed: Boolean
+}
+
+"""
+A component method
+"""
+type ComponentMethod {
+  name: String!
+  parameters: [MethodParameter!]!
+  hasParameters: Boolean!
+  isPublic: Boolean!
+}
+
+"""
+A method parameter
+"""
+type MethodParameter {
+  name: String!
+  type: String
+  isOptional: Boolean!
+  defaultValue: String
+}
+
+"""
+Database query information
+"""
+type DatabaseQuery {
+  id: ID!
+  query: String!
+  bindings: [String!]!
+  time: Float!
+  connectionName: String!
+  timestamp: String!
+  caller: String
+  component: String
+  isN1Candidate: Boolean
+}
+
+"""
+Database query result with N+1 detection
+"""
+type DatabaseQueryResult {
+  queries: [DatabaseQuery!]!
+  n1Issues: [N1Issue!]
+}
+
+"""
+N+1 query issue
+"""
+type N1Issue {
+  pattern: String!
+  count: Int!
+  queries: [ID!]!
+  component: String
+  suggestedFix: String
+}
+
+"""
+HTTP request information
+"""
+type HttpRequest {
+  id: ID!
+  method: String!
+  uri: String!
+  url: String!
+  path: String!
+  responseStatus: Int!
+  responseTime: Float!
+  timestamp: String!
+  headers: [Header!]!
+  query: [Parameter!]!
+  isAjax: Boolean!
+  isLivewire: Boolean
+}
+
+"""
+HTTP header
+"""
+type Header {
+  name: String!
+  value: String!
+}
+
+"""
+URL or request parameter
+"""
+type Parameter {
+  name: String!
+  value: String!
+}
+
+"""
+Event information
+"""
+type Event {
+  id: ID!
+  type: String!
+  name: String!
+  payload: String
+  component: String
+  timestamp: String!
+}
+
+"""
+Debug snapshot
+"""
+type Snapshot {
+  id: ID!
+  label: String!
+  timestamp: String!
+  data: DebugData!
+}
+
+"""
+Result of a snapshot creation
+"""
+type SnapshotResult {
+  success: Boolean!
+  message: String!
+  snapshot: Snapshot
+}
+
+"""
+Result of a snapshot deletion
+"""
+type DeleteResult {
+  success: Boolean!
+  message: String!
+}
+
+"""
+Result of a component property update
+"""
+type UpdateResult {
+  success: Boolean!
+  message: String!
+  component: LivewireComponent
+}
+
+"""
+Result of a component method execution
+"""
+type ExecuteResult {
+  success: Boolean!
+  message: String!
+  result: String
+  component: LivewireComponent
+}

@@ -1,0 +1,147 @@
+name: Tapped Tests
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  php-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [8.0, 8.1, 8.2]
+        laravel: [8.*, 9.*, 10.*]
+        stability: [prefer-stable]
+        include:
+          - laravel: 8.*
+            testbench: ^6.23
+          - laravel: 9.*
+            testbench: ^7.0
+          - laravel: 10.*
+            testbench: ^8.0
+        exclude:
+          - php: 8.0
+            laravel: 10.*
+
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
+          coverage: xdebug
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+
+      - name: Execute unit tests
+        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: false
+          file: ./coverage.xml
+
+  js-tests:
+    runs-on: ubuntu-latest
+    name: Browser Extension Tests
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: ./extension/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd extension
+          npm ci
+
+      - name: Run JS tests
+        run: |
+          cd extension
+          npm test
+
+  browser-tests:
+    runs-on: ubuntu-latest
+    name: Browser Integration Tests
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, intl, gd, exif, iconv
+          coverage: none
+          tools: composer:v2
+          
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction
+      
+      - name: Prepare Dusk
+        run: |
+          php vendor/laravel/dusk/bin/chromedriver-linux > /dev/null 2>&1 &
+          export DISPLAY=:99
+          chromedriver --headless --disable-gpu --remote-debugging-port=9222 > /dev/null 2>&1 &
+      
+      - name: Run Dusk tests
+        env:
+          APP_URL: "http://127.0.0.1:8000"
+          DUSK_DRIVER_URL: "http://localhost:9515"
+        run: |
+          php -S 127.0.0.1:8000 -t ./tests/Browser/public > /dev/null 2>&1 &
+          php vendor/bin/phpunit --testsuite Browser
+
+  code-quality:
+    runs-on: ubuntu-latest
+    name: Code Quality Checks
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
+          tools: composer:v2, phpcs, php-cs-fixer
+          
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction
+          
+      - name: Run PHP CS Fixer
+        run: php-cs-fixer fix --dry-run --diff --verbose
+        
+      - name: Run PHPCS
+        run: phpcs --standard=PSR12 src

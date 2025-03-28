@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '1.5.2'
+}
+
+group 'com.thinkneverland.tapped'
+version '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    implementation 'com.google.code.gson:gson:2.8.9'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+    version = '2021.3'
+    type = 'IU' // Ultimate Edition
+    plugins = ['com.jetbrains.php'] // PHP plugin dependency
+}
+
+patchPluginXml {
+    changeNotes = """
+      <ul>
+        <li>1.0.0: Initial release with support for Laravel Livewire debugging</li>
+      </ul>
+      """
+    sinceBuild = '213'
+    untilBuild = '223.*'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
